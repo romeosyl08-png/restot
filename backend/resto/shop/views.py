@@ -2,15 +2,14 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.views.decorators.http import require_POST
 from .models import Meal, Category, Order, OrderItem
 from .cart import Cart
-from .forms import CheckoutForm, ProfileForm
+from .forms import CheckoutForm, ProfileForm, SignupForm
 from django.contrib.admin.views.decorators import staff_member_required
 from django.db.models import Sum, F
 from django.utils import timezone
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth import login as auth_login
 from .models import Order, OrderItem, UserProfile , Meal  # + Meal
+from django.contrib.auth import login
 
 
 
@@ -110,18 +109,16 @@ def checkout(request):
 
 
 def signup(request):
-    next_url = request.GET.get('next') or request.POST.get('next') or '/'
-    if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+    if request.method == "POST":
+        form = SignupForm(request.POST)
         if form.is_valid():
             user = form.save()
-            from .models import UserProfile
-            UserProfile.objects.create(user=user)
-            auth_login(request, user)
-            return redirect(next_url)
+            login(request, user)  # connexion directe après inscription
+            return redirect("shop:meal_list")
     else:
-        form = UserCreationForm()
-    return render(request, 'registration/signup.html', {'form': form, 'next': next_url})
+        form = SignupForm()
+
+    return render(request, "registration/signup.html", {"form": form})
 
 
 
