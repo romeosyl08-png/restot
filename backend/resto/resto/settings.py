@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 import os
 from pathlib import Path
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,10 +22,21 @@ DEBUG = os.environ.get("DJANGO_DEBUG", "True") == "True"
 
 ALLOWED_HOSTS = os.environ.get("DJANGO_DEBUG")
 
-import dj_database_url
-DATABASES = {
-    'default': dj_database_url.parse(os.environ.get("DATA_URL"))
-}
+DATABASE_URL = os.environ.get("DATABASE_URL")  # pour Render, pas DATA_URL
+
+if DATABASE_URL:
+    # Prod (Render, etc.)
+    DATABASES = {
+        "default": dj_database_url.parse(DATABASE_URL)
+    }
+else:
+    # Dev local → SQLite
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
 
 
 
@@ -37,7 +49,6 @@ SECRET_KEY = 'django-insecure-d0ipep*_rccpluu0)fx1+o4s8zlp3prt3#otfptt^qw^3+v_jw
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
 
 
 # Application definition
