@@ -37,6 +37,8 @@ else:
             "NAME": BASE_DIR / "db.sqlite3",
         }
     }
+    ALLOWED_HOSTS = ['127.0.0.1','localshost']
+
 
 
 
@@ -132,12 +134,18 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 CLOUDINARY_URL=os.environ.get("CLOUDINARY_URL") 
+if CLOUDINARY_URL:
+    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+    MEDIA_URL = '/media/'
+else:
+    # Dev local sans Cloudinary → stockage sur disque
+    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = BASE_DIR / 'media'
 
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 CART_SESSION_ID = "cart"
 
 
 STATIC_URL = 'static/'
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+
