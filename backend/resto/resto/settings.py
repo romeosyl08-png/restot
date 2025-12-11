@@ -19,7 +19,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "dev-key-pas-bien")
 DEBUG = os.environ.get("DJANGO_DEBUG", "True") == "True"
 
-ALLOWED_HOSTS = os.environ.get("localhost").split(",")
+ALLOWED_HOSTS = os.environ.get("DJANGO_DEBUG")
+
+import dj_database_url
+DATABASES = {
+    'default': dj_database_url.parse(os.environ.get("DATA_URL"))
+}
+
 
 
 # Quick-start development settings - unsuitable for production
@@ -44,6 +50,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'shop',
+    'cloudinary',
+    'cloudinary_storage',
 ]
 
 MIDDLEWARE = [
@@ -74,15 +82,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'resto.wsgi.application'
-
-
-# Database
-# https://docs.djangoproject.com/en/6.0/ref/settings/#databases
-
-import dj_database_url
-DATABASES = {
-    'default': dj_database_url.parse(os.environ.get("DATABASE_URL"))
-}
 
 
 
@@ -120,6 +119,11 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
+
+CLOUDINARY_URL=os.environ.get("CLOUDINARY_URL") 
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
 
 STATIC_URL = 'static/'
 MEDIA_URL = '/media/'
