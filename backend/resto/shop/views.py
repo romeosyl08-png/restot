@@ -10,7 +10,7 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from .models import Order, OrderItem, UserProfile , Meal  # + Meal
 from django.contrib.auth import login
-
+from django.contrib.auth import logout
 
 
 def meal_list(request, category_slug=None):
@@ -120,6 +120,14 @@ def signup(request):
 
     return render(request, "registration/signup.html", {"form": form})
 
+
+
+def logout_view(request):
+    """
+    Déconnecte l'utilisateur puis le renvoie vers la page du menu.
+    """
+    logout(request)
+    return redirect('shop:meal_list')
 
 
 

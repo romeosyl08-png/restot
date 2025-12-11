@@ -149,3 +149,7 @@ CART_SESSION_ID = "cart"
 
 STATIC_URL = 'static/'
 
+# Où aller après une connexion réussie
+LOGIN_REDIRECT_URL = '/'        # ta vue profil
+LOGOUT_REDIRECT_URL = 'shop:meal_list'
+

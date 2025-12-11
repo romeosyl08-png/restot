@@ -18,8 +18,10 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     # Auth utilisateur (login / logout / password reset)
-    path('accounts/signup/', shop_views.signup, name='signup')
-    ,
+    path('accounts/signup/', shop_views.signup, name='signup'),
+
+    path('logout/', shop_views.logout_view, name='logout_custom'),
+    
     path('accounts/', include('django.contrib.auth.urls')),
 
     # Site public (toutes les URLs de l’app shop)
