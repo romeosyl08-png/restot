@@ -124,6 +124,8 @@ CLOUDINARY_URL=os.environ.get("CLOUDINARY_URL")
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
+CART_SESSION_ID = "cart"
+
 
 STATIC_URL = 'static/'
 MEDIA_URL = '/media/'
