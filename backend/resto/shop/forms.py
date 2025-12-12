@@ -60,3 +60,17 @@ class ProfileForm(forms.ModelForm):
         model = UserProfile
         fields = ['full_name', 'phone', 'address']
 
+ 
+
+
+
+ 
+from .models import Meal
+
+class MealForm(forms.ModelForm):
+    class Meta:
+        model = Meal
+        fields = ["category", "name", "slug", "description", "price", "is_active", "image"]
+        widgets = {
+            "description": forms.Textarea(attrs={"rows": 3}),
+        }

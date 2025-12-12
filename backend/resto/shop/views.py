@@ -168,6 +168,53 @@ def admin_dashboard(request):
     }
     return render(request, 'admin/dashboard.html', context)
 
+from django.shortcuts import get_object_or_404, redirect, render
+from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib import messages
+from .models import Meal, Order, OrderItem
+from .forms import MealForm
+
+@staff_member_required
+def admin_meal_list(request):
+    meals = Meal.objects.select_related("category").order_by("category__name", "name")
+    return render(request, "admin/meals_list.html", {"meals": meals})
+
+@staff_member_required
+def admin_meal_add(request):
+    if request.method == "POST":
+        form = MealForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Plat ajouté.")
+            return redirect("admin_meal_list")
+    else:
+        form = MealForm()
+    return render(request, "admin/meal_form.html", {"form": form, "mode": "add"})
+
+@staff_member_required
+def admin_meal_edit(request, meal_id):
+    meal = get_object_or_404(Meal, id=meal_id)
+    if request.method == "POST":
+        form = MealForm(request.POST, request.FILES, instance=meal)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Plat modifié.")
+            return redirect("admin_meal_list")
+    else:
+        form = MealForm(instance=meal)
+    return render(request, "admin/meal_form.html", {"form": form, "mode": "edit", "meal": meal})
+
+@staff_member_required
+def admin_meal_delete(request, meal_id):
+    meal = get_object_or_404(Meal, id=meal_id)
+    if request.method == "POST":
+        meal.delete()
+        messages.success(request, "Plat supprimé.")
+        return redirect("admin_meal_list")
+    return render(request, "admin/meal_confirm_delete.html", {"meal": meal})
+
+
+
 
 
 
@@ -179,6 +226,26 @@ def mark_order_delivered(request, order_id):
     order.status = 'delivered'
     order.save()
     return redirect('admin_dashboard')
+
+
+from django.contrib.auth import get_user_model
+User = get_user_model()
+
+@staff_member_required
+def admin_user_detail(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+
+    # Si tu as un modèle Profile lié (OneToOne), récupère-le prudemment
+    profile = getattr(user, "profile", None)
+
+    orders = Order.objects.filter(user=user).order_by("-created_at")[:50]
+
+    return render(request, "admin/user_detail.html", {
+        "u": user,
+        "profile": profile,
+        "orders": orders,
+    })
+
 
 
 

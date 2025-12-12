@@ -13,6 +13,12 @@ urlpatterns = [
         shop_views.mark_order_delivered,
         name='mark_order_delivered',
     ),
+    path('admin/meals/', shop_views.admin_meal_list, name='admin_meal_list'),
+    path('admin/meals/add/', shop_views.admin_meal_add, name='admin_meal_add'),
+    path('admin/meals/<int:meal_id>/edit/', shop_views.admin_meal_edit, name='admin_meal_edit'),
+    path('admin/meals/<int:meal_id>/delete/', shop_views.admin_meal_delete, name='admin_meal_delete'),
+
+    path('admin/users/<int:user_id>/', shop_views.admin_user_detail, name='admin_user_detail'),
 
     # Admin Django classique
     path('admin/', admin.site.urls),

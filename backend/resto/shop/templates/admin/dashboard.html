@@ -75,6 +75,8 @@
                 <th>ID</th>
                 <th>Client</th>
                 <th>User</th>
+                <th>Téléphone</th>
+                <th>Adresse</th>
                 <th>Total</th>
                 <th>Statut</th>
                 <th>Action</th>
@@ -87,14 +89,19 @@
                   <td>{{ order.customer_name }}</td>
                   <td>
                     {% if order.user %}
-                      {{ order.user.username }}
+                      <a href="{% url 'admin_user_detail' order.user.id %}" class="text-decoration-none">
+                        {{ order.user.username }}
+                      </a>
                     {% else %}
                       -
                     {% endif %}
                   </td>
+                  <td>{{ order.phone|default:"-" }}</td>
+                  <td class="text-truncate" style="max-width: 240px;">
+                    {{ order.address|default:"-" }}
+                  </td>
                   <td>{{ order.total }} FCFA</td>
                   <td>{{ order.get_status_display }}</td>
-                  <td>
                     {% if order.status != 'delivered' %}
                       <form method="post" action="{% url 'mark_order_delivered' order.id %}">
                         {% csrf_token %}
@@ -161,12 +168,8 @@
       <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
         <h2 class="h6 mb-0">Plats</h2>
         <div>
-          <a href="{% url 'admin:shop_meal_add' %}" class="btn btn-sm btn-primary me-2">
-            + Ajouter
-          </a>
-          <a href="{% url 'admin:shop_meal_changelist' %}" class="btn btn-sm btn-outline-secondary">
-            Voir tout
-          </a>
+          <a href="{% url 'admin_meal_add' %}" class="btn btn-sm btn-primary me-2">+ Ajouter</a>
+          <a href="{% url 'admin_meal_list' %}" class="btn btn-sm btn-outline-secondary">Voir tout</a>
         </div>
       </div>
       <div class="card-body p-0" style="max-height: 320px; overflow-y: auto;">
@@ -194,8 +197,11 @@
                   {% endif %}
                 </td>
                 <td class="text-end">
-                  <a href="{% url 'admin:shop_meal_change' meal.id %}" class="btn btn-sm btn-outline-primary">
+                  <a href="{% url 'admin_meal_edit' meal.id %}" class="btn btn-sm btn-outline-primary">
                     Modifier
+                  </a>
+                  <a href="{% url 'admin_meal_delete' meal.id %}" class="btn btn-sm btn-outline-danger ms-2">
+                    Supprimer
                   </a>
                 </td>
               </tr>
