@@ -33,8 +33,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # Media storage
-    'cloudinary',
     'cloudinary_storage',
+    'cloudinary',
 
     # App métier
     'shop',
@@ -74,20 +74,6 @@ WSGI_APPLICATION = 'resto.wsgi.application'
 # -------------------------------------------------------------------
 IS_PRODUCTION = os.environ.get("RENDER") is not None
 
-if IS_PRODUCTION:
-    # Render → Postgres via DATABASE_URL
-    DATABASES = {
-        "default": dj_database_url.parse(os.environ["DATABASE_URL"])
-    }
-else:
-    # Local → SQLite
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": BASE_DIR / "db.sqlite3",
-        }
-    }
-
 # -------------------------------------------------------------------
 # Password validation
 # -------------------------------------------------------------------
@@ -126,8 +112,19 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'  # important pour Render (collectstatic)
 MEDIA_URL = '/media/'
 
 if IS_PRODUCTION:
-    # En prod → toutes les images via Cloudinary
+    # Configuration Cloudinary
+    import cloudinary
+    
+    cloudinary.config(
+        cloud_name=os.environ.get("CLOUDINARY_CLOUD_NAME"),
+        api_key=os.environ.get("CLOUDINARY_API_KEY"),
+        api_secret=os.environ.get("CLOUDINARY_API_SECRET"),
+        secure=True
+    )
+    
+    # Storage pour les médias
     DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
+    
     CLOUDINARY_STORAGE = {
         "CLOUD_NAME": os.environ.get("CLOUDINARY_CLOUD_NAME"),
         "API_KEY": os.environ.get("CLOUDINARY_API_KEY"),
