@@ -12,6 +12,9 @@ from .models import Order, OrderItem, UserProfile , Meal  # + Meal
 from django.contrib.auth import login
 from django.contrib.auth import logout
 
+from django.shortcuts import redirect
+from django.views.decorators.http import require_POST
+
 
 def meal_list(request, category_slug=None):
     category = None
@@ -34,12 +37,16 @@ def meal_detail(request, slug):
     return render(request, 'shop/meal_detail.html', {'meal': meal})
 
 
+
 @require_POST
 def cart_add(request, meal_id):
     cart = Cart(request)
-    cart.add(meal_id=meal_id, quantity=1)
-    return redirect('shop:cart_detail')
 
+    qty = int(request.POST.get("quantity", 1))
+    qty = max(1, min(qty, 20))  # borne 1..20 (tu ajustes)
+
+    cart.add(meal_id=meal_id, quantity=qty)
+    return redirect('shop:cart_detail')
 
 def cart_remove(request, meal_id):
     cart = Cart(request)
