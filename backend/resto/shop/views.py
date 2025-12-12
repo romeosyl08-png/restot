@@ -231,6 +231,18 @@ def mark_order_delivered(request, order_id):
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
+
+@staff_member_required
+def admin_user_list(request):
+    users = (
+        User.objects
+        .all()
+        .order_by("-date_joined")
+    )
+    return render(request, "admin/user_list.html", {
+        "users": users,
+    })
+
 @staff_member_required
 def admin_user_detail(request, user_id):
     user = get_object_or_404(User, id=user_id)

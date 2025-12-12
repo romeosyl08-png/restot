@@ -18,6 +18,7 @@ urlpatterns = [
     path('admin/meals/<int:meal_id>/edit/', shop_views.admin_meal_edit, name='admin_meal_edit'),
     path('admin/meals/<int:meal_id>/delete/', shop_views.admin_meal_delete, name='admin_meal_delete'),
 
+    path('admin/users/', shop_views.admin_user_list, name='admin_user_list'),
     path('admin/users/<int:user_id>/', shop_views.admin_user_detail, name='admin_user_detail'),
 
     # Admin Django classique
