@@ -27,20 +27,7 @@ ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "").split(",")
 
 DATABASE_URL = os.environ.get("DATABASE_URL")  # pour Render, pas DATA_URL
 
-if DATABASE_URL:
-    # Prod (Render, etc.)
-    DATABASES = {
-        "default": dj_database_url.parse(DATABASE_URL)
-    }
-else:
-    # Dev local → SQLite
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": BASE_DIR / "db.sqlite3",
-        }
-    }
-    ALLOWED_HOSTS = ['127.0.0.1','localshost']
+
 
 
 
@@ -133,27 +120,44 @@ USE_I18N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 # Configuration par défaut SQLite
-USE_SQLITE = os.getenv('USE_SQLITE', 'False').lower() in ['true', '1', 'yes']
+# Détection Render (prod)
+IS_PRODUCTION = os.environ.get("RENDER") is not None
+USE_SQLITE = not IS_PRODUCTION   # logique simple : local → sqlite
 
-if USE_SQLITE:
-    # En local
-    MEDIA_URL = '/media/'
-    MEDIA_ROOT = BASE_DIR / 'media'
+# ---------------------------------------------------
+# DATABASE
+# ---------------------------------------------------
+if IS_PRODUCTION:
+    DATABASES = {
+        "default": dj_database_url.parse(os.environ["DATABASE_URL"])
+    }
 else:
-    # En production → utiliser Cloudinary 
-    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-    CLOUDINARY_STORAGE = {
-        'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'),
-        'API_KEY': os.environ.get('CLOUDINARY_API_KEY'),
-        'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
     }
 
+# ---------------------------------------------------
+# MEDIA & CLOUDINARY
+# ---------------------------------------------------
+if IS_PRODUCTION:
+    DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
 
-IS_PRODUCTION = os.environ.get("RENDER", False)
+    CLOUDINARY_STORAGE = {
+        "CLOUD_NAME": os.environ.get("CLOUDINARY_CLOUD_NAME"),
+        "API_KEY": os.environ.get("CLOUDINARY_API_KEY"),
+        "API_SECRET": os.environ.get("CLOUDINARY_API_SECRET"),
+    }
+
+    MEDIA_URL = "/media/"  # Cloudinary l’ignore, mais Django en a besoin
+
+else:
+    MEDIA_URL = "/media/"
+    MEDIA_ROOT = BASE_DIR / "media"
 
 
 CART_SESSION_ID = "cart"
