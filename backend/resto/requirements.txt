@@ -18,3 +18,4 @@ six==1.17.0
 smmap==5.0.2
 sqlparse==0.5.4
 urllib3==2.6.1
+whitenoise
