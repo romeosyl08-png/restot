@@ -3,26 +3,46 @@
 {% block title %}{{ meal.name }} – Resto{% endblock %}
 
 {% block content %}
-<div class="row">
-  <div class="col-md-5">
-    {% if meal.image %}
-      <img src="{{ meal.image.url }}" class="img-fluid rounded shadow-sm" alt="{{ meal.name }}">
-    {% else %}
-      <img src="https://via.placeholder.com/600x400?text=Resto"
-           class="img-fluid rounded shadow-sm" alt="{{ meal.name }}">
-    {% endif %}
-  </div>
-  <div class="col-md-7">
-    <h1 class="h3">{{ meal.name }}</h1>
-    <p class="text-muted">{{ meal.category.name }}</p>
-    <p>{{ meal.description }}</p>
-    <p class="h4">{{ meal.price }} FCFA</p>
+<div class="container py-4">
+  <div class="row g-4">
+    <div class="col-lg-7">
+      <div class="card border-0 shadow-sm overflow-hidden">
+        {% if meal.image %}
+          <img src="{{ meal.image.url }}" class="meal-img-lg" alt="{{ meal.name }}">
+        {% else %}
+          <img src="https://via.placeholder.com/1200x675?text=Resto" class="meal-img-lg" alt="{{ meal.name }}">
+        {% endif %}
+      </div>
+    </div>
 
-    <form action="{% url 'shop:cart_add' meal.id %}" method="post" class="d-inline">
-      {% csrf_token %}
-      <button class="btn btn-primary btn-lg" type="submit">Ajouter au panier</button>
-    </form>
-    <a href="{% url 'shop:meal_list' %}" class="btn btn-link">Retour au menu</a>
+    <div class="col-lg-5">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-4">
+          <div class="d-flex justify-content-between align-items-start gap-2">
+            <h1 class="h4 fw-bold mb-1">{{ meal.name }}</h1>
+            <span class="badge text-bg-primary fs-6">{{ meal.price }} FCFA</span>
+          </div>
+
+          <div class="text-muted small mb-3">{{ meal.category.name }}</div>
+
+          {% if meal.description %}
+            <p class="mb-4">{{ meal.description }}</p>
+          {% else %}
+            <p class="mb-4 text-muted">Aucune description. Mais tu sais très bien pourquoi tu es là.</p>
+          {% endif %}
+
+          <div class="d-grid gap-2">
+            <a class="btn btn-dark btn-lg" href="{% url 'shop:cart_add' meal.id %}">
+              Ajouter au panier
+            </a>
+            <a class="btn btn-outline-secondary" href="{% url 'shop:meal_list' %}">
+              Retour au menu
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
+
 {% endblock %}

@@ -3,57 +3,65 @@
 {% block title %}Panier – Resto{% endblock %}
 
 {% block content %}
-<h1 class="h3 mb-4">Votre panier</h1>
+<div class="container py-4">
+  <div class="row g-4">
+    <div class="col-lg-8">
+      <h1 class="h4 fw-bold mb-3">Panier</h1>
 
-{% if cart %}
-  <table class="table align-middle">
-    <thead>
-      <tr>
-        <th>Plat</th>
-        <th>Qté</th>
-        <th>Total</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for item in cart %}
-        <tr>
-          <td>{{ item.meal.name }}</td>
-          <td>{{ item.quantity }}</td>
-          <td>{{ item.total_price }} FCFA</td>
-          <td>
-            <a href="{% url 'shop:cart_remove' item.meal.id %}"
-               class="btn btn-sm btn-outline-danger">
-              Retirer
-            </a>
-          </td>
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+      {% if cart and cart|length > 0 %}
+        <div class="vstack gap-3">
+          {% for item in cart %}
+            <div class="card border-0 shadow-sm">
+              <div class="card-body d-flex gap-3 align-items-start">
+                <div class="flex-grow-1">
+                  <div class="fw-semibold">{{ item.meal.name }}</div>
+                  <div class="text-muted small">{{ item.price }} FCFA × {{ item.quantity }}</div>
+                  <div class="fw-bold mt-1">{{ item.total_price }} FCFA</div>
 
-  <div class="d-flex justify-content-between align-items-center">
-    <h4>Total : {{ cart.get_total_price }} FCFA</h4>
+                  <div class="d-flex gap-2 mt-3">
+                    <a class="btn btn-sm btn-outline-secondary"
+                       href="{% url 'shop:meal_detail' item.meal.slug %}">
+                      Détails
+                    </a>
+                    <a class="btn btn-sm btn-outline-danger"
+                       href="{% url 'shop:cart_remove' item.meal.id %}">
+                      Retirer
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="alert alert-secondary">Ton panier est vide.</div>
+      {% endif %}
+    </div>
 
-    {% if user.is_authenticated %}
-      <a href="{% url 'shop:checkout' %}" class="btn btn-success">
-        Passer la commande
-      </a>
-    {% else %}
-      <div class="text-end">
-        <p class="mb-1">Connectez-vous pour finaliser la commande.</p>
-        <a href="{% url 'login' %}?next={% url 'shop:checkout' %}" class="btn btn-primary btn-sm">
-          Connexion
-        </a>
-        <a href="{% url 'signup' %}?next={% url 'shop:checkout' %}" class="btn btn-outline-secondary btn-sm">
-          Inscription
-        </a>
+    <div class="col-lg-4">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body">
+          <h2 class="h6 fw-bold mb-3">Résumé</h2>
+
+          <div class="d-flex justify-content-between mb-2">
+            <span class="text-muted">Total</span>
+            <span class="fw-bold">{{ cart.get_total_price }} FCFA</span>
+          </div>
+
+          <a class="btn btn-dark w-100 mt-2"
+             href="{% url 'shop:checkout' %}">
+            Passer commande
+          </a>
+
+          <a class="btn btn-outline-secondary w-100 mt-2"
+             href="{% url 'shop:meal_list' %}">
+            Continuer mes achats
+          </a>
+        </div>
       </div>
-    {% endif %}
+    </div>
   </div>
-{% else %}
-  <p>Votre panier est vide.</p>
-  <a href="{% url 'shop:meal_list' %}" class="btn btn-primary">Voir le menu</a>
-{% endif %}
+</div>
+
 
 {% endblock %}
