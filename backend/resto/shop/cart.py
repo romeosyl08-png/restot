@@ -15,8 +15,10 @@ class Cart:
         meal_id = str(meal_id)
         if meal_id not in self.cart:
             self.cart[meal_id] = {'quantity': 0}
-        self.cart[meal_id]['quantity'] += quantity
+
+        self.cart[meal_id]['quantity'] = max(1, self.cart[meal_id]['quantity'] + int(quantity))
         self.save()
+
 
     def remove(self, meal_id):
         meal_id = str(meal_id)
@@ -44,6 +46,7 @@ class Cart:
                 yield {
                     'meal': meal,
                     'quantity': quantity,
+                    'price': meal.price,
                     'total_price': total_price
                 }
 
@@ -52,3 +55,8 @@ class Cart:
         for item in self:
             total += item['total_price']
         return total
+    
+    def __len__(self):
+        
+        return sum(item['quantity'] for item in self.cart.values())
+

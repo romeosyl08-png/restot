@@ -3,6 +3,28 @@
 {% block title %}Menu – Resto Cuistot{% endblock %}
 
 {% block content %}
+<div class="container mb-4">
+  <div class="hero-food card border-0 shadow-sm overflow-hidden">
+    <div class="card-body p-4 p-md-5">
+      <div class="row align-items-center gy-3">
+        <div class="col-lg-8">
+          <h1 class="display-6 fw-bold mb-2">
+            Commande en ligne, livraison rapide
+          </h1>
+          <p class="lead mb-0">
+            Des plats chauds, faits maison. Tu choisis, on s’occupe du reste.
+          </p>
+        </div>
+        <div class="col-lg-4 text-lg-end">
+          <a href="#plats" class="btn btn-light btn-lg fw-semibold">
+            Voir le menu
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <section class="container py-4">
   <div class="hero card border-0 shadow-sm overflow-hidden mb-4">
     <div class="card-body p-4 p-md-5">
@@ -75,15 +97,16 @@
 
       <div class="d-flex gap-2">
         <a class="btn btn-outline-secondary w-50"
-           href="{% url 'shop:meal_detail' meal.slug %}">
+          href="{% url 'shop:meal_detail' meal.slug %}">
           Détails
         </a>
 
-        <a class="btn btn-dark w-50"
-           href="{% url 'shop:cart_add' meal.id %}">
-          + Ajouter
-        </a>
+        <form method="post" action="{% url 'shop:cart_add' meal.id %}" class="w-50 m-0">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-dark w-100">+ Ajouter</button>
+        </form>
       </div>
+
     </div>
   </div>
 </div>

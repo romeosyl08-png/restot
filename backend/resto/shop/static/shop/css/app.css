@@ -23,3 +23,40 @@ body { background: #f6f7f9; }
   border-top-left-radius: var(--radius);
   border-top-right-radius: var(--radius);
 }
+
+
+/* === BACKGROUND FOOD === */
+body {
+  background:
+    linear-gradient(
+      rgba(255, 255, 255, 0.92),
+      rgba(255, 255, 255, 0.92)
+    ),
+    url("https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1600&q=80");
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center;
+}
+
+/* zone principale flottante */
+.main-content {
+  min-height: 100vh;
+}
+
+
+.hero-food {
+  background:
+    linear-gradient(
+      rgba(0,0,0,0.35),
+      rgba(0,0,0,0.35)
+    ),
+    url("https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?auto=format&fit=crop&w=1600&q=80");
+  background-size: cover;
+  background-position: center;
+  color: white;
+}
+
+.hero-food h1,
+.hero-food p {
+  color: white;
+}
