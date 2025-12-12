@@ -201,3 +201,11 @@ def profile(request):
     })
 
 
+from django.conf import settings
+from django.http import HttpResponse
+
+def debug_storage(request):
+    return HttpResponse(
+        f"<h3>DEFAULT_FILE_STORAGE = {settings.DEFAULT_FILE_STORAGE}</h3>"
+        f"<p>CLOUDINARY_URL = {repr(getattr(settings, 'CLOUDINARY_URL', None))}</p>"
+    )

@@ -14,4 +14,7 @@ urlpatterns = [
 
     path('checkout/', views.checkout, name='checkout'),
     path('profile/', views.profile, name='profile'),
+
+    # === Debug Storage ===
+    path('debug/storage/', views.debug_storage, name='debug_storage'),
 ]
