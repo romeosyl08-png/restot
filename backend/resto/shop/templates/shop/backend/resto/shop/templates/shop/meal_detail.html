@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}{{ meal.name }} – Resto{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-5">
+    {% if meal.image %}
+      <img src="{{ meal.image.url }}" class="img-fluid rounded shadow-sm" alt="{{ meal.name }}">
+    {% else %}
+      <img src="https://via.placeholder.com/600x400?text=Resto"
+           class="img-fluid rounded shadow-sm" alt="{{ meal.name }}">
+    {% endif %}
+  </div>
+  <div class="col-md-7">
+    <h1 class="h3">{{ meal.name }}</h1>
+    <p class="text-muted">{{ meal.category.name }}</p>
+    <p>{{ meal.description }}</p>
+    <p class="h4">{{ meal.price }} FCFA</p>
+
+    <form action="{% url 'shop:cart_add' meal.id %}" method="post" class="d-inline">
+      {% csrf_token %}
+      <button class="btn btn-primary btn-lg" type="submit">Ajouter au panier</button>
+    </form>
+    <a href="{% url 'shop:meal_list' %}" class="btn btn-link">Retour au menu</a>
+  </div>
+</div>
+{% endblock %}
