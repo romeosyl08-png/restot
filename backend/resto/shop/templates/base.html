@@ -28,10 +28,10 @@
           <a class="nav-link" href="{% url 'shop:meal_list' %}">Menu</a>
         </li>
         <li class="nav-item">
-          <a class="btn btn-dark position-relative" href="{% url 'shop:cart_detail' %}">
+          <a class="nav-link position-relative" href="{% url 'shop:cart_detail' %}">
             Panier
-            {% if cart %}
-              <span class="badge text-bg-warning position-absolute top-0 start-100 translate-middle rounded-pill">
+            {% if cart|length > 0 %}
+              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                 {{ cart|length }}
               </span>
             {% endif %}
