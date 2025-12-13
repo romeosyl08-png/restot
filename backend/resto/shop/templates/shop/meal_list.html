@@ -82,10 +82,20 @@
           Détails
         </a>
 
-        <form method="post" action="{% url 'shop:cart_add' meal.id %}" class="w-50 m-0">
+       <form method="post" action="{% url 'shop:cart_add' meal.id %}" class="d-flex gap-2 align-items-center">
           {% csrf_token %}
-          <button type="submit" class="btn btn-dark w-100">+ Ajouter</button>
+          <input
+            type="number"
+            name="quantity"
+            class="form-control form-control-sm"
+            style="max-width: 90px;"
+            min="1" max="20" value="1"
+          >
+          <button type="submit" class="btn btn-sm btn-dark">
+            Ajouter
+          </button>
         </form>
+
       </div>
 
     </div>
