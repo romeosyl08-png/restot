@@ -1,3 +1,4 @@
+{# templates/shop/meal_of_the_day_instagram.html #}
 {% extends "base.html" %}
 {% block title %}Plat du jour – Resto Cuistot{% endblock %}
 
@@ -5,88 +6,130 @@
 <section class="container py-4">
 
   {% if not meal %}
-    <div class="alert alert-warning">
-      Aucun plat du jour n’est disponible.
-    </div>
+    <div class="alert alert-warning">Aucun plat du jour n’est disponible.</div>
   {% else %}
 
-  <!-- HERO + IMAGE -->
-  <div class="page-surface p-3 p-md-4">
-    <div class="row g-4 align-items-stretch">
+  {# Style “Instagram” : carte centrée, image carrée/portrait, actions, commentaires fake #}
+  <div class="ig-wrap mx-auto">
+    <article class="ig-card shadow-sm">
 
-      <!-- Image -->
-      <div class="col-lg-7">
-        <div class="card border-0 shadow-sm overflow-hidden">
-          {% if meal.image %}
-            <img src="{{ meal.image.url }}" class="meal-img-lg" alt="{{ meal.name }}">
-          {% else %}
-            <img src="https://via.placeholder.com/1200x675?text=Resto" class="meal-img-lg" alt="{{ meal.name }}">
-          {% endif %}
+      <!-- Header -->
+      <header class="ig-header">
+        <div class="ig-avatar" aria-hidden="true"></div>
+        <div class="ig-head-txt">
+          <div class="ig-title">Resto Cuistot</div>
+          <div class="ig-sub">
+            {{ meal.category.name }} · Cutoff {{ cutoff_time|time:"H:i" }}
+          </div>
         </div>
+
+        {% if sold_out %}
+          <span class="badge bg-danger ig-badge">SOLD OUT</span>
+        {% else %}
+          <span class="badge text-bg-primary ig-badge">{{ meal.price }} FCFA</span>
+        {% endif %}
+      </header>
+
+      <!-- Media -->
+      <div class="ig-media">
+        {% if meal.image %}
+          <img src="{{ meal.image.url }}" alt="{{ meal.name }}">
+        {% else %}
+          <img src="https://via.placeholder.com/1200x1200?text=Resto+Cuistot" alt="{{ meal.name }}">
+        {% endif %}
       </div>
 
-      <!-- Infos + achat -->
-      <div class="col-lg-5">
-        <div class="card border-0 shadow-sm h-100">
-          <div class="card-body p-4">
+      <!-- Actions -->
+      <div class="ig-actions">
+        <div class="ig-actions-left">
+          <button type="button" class="ig-iconbtn" aria-label="J’aime" {% if sold_out %}disabled{% endif %}>♡</button>
+          <button type="button" class="ig-iconbtn" aria-label="Commenter">💬</button>
+          <button type="button" class="ig-iconbtn" aria-label="Partager">✈</button>
+        </div>
+        <button type="button" class="ig-iconbtn" aria-label="Enregistrer">🔖</button>
+      </div>
 
-            <div class="d-flex justify-content-between align-items-start gap-2">
-              <h1 class="h4 fw-bold mb-1">{{ meal.name }}</h1>
+      <!-- Content -->
+      <div class="ig-body">
+        <h1 class="ig-meal">{{ meal.name }}</h1>
 
-              {% if sold_out %}
-                <span class="badge bg-danger fs-6">SOLD OUT</span>
-              {% else %}
-                <span class="badge text-bg-primary fs-6">{{ meal.price }} FCFA</span>
-              {% endif %}
-            </div>
+        {% if meal.description %}
+          <p class="ig-desc">{{ meal.description }}</p>
+        {% else %}
+          <p class="ig-desc text-muted">Plat du jour. Pas besoin de poésie.</p>
+        {% endif %}
 
-            <div class="text-muted small mb-3">
-              {{ meal.category.name }} · Fermeture commandes à {{ cutoff_time|time:"H:i" }}
-            </div>
+        <div class="ig-meta">
+          <span class="ig-like">1 284 j’aime</span>
+          <span class="ig-time">Aujourd’hui</span>
+        </div>
 
-            {% if meal.description %}
-              <p class="mb-4">{{ meal.description }}</p>
-            {% else %}
-              <p class="mb-4 text-muted">Plat du jour. Pas besoin de poésie.</p>
-            {% endif %}
+        <!-- Achat -->
+        <form method="post" action="{% url 'orders:cart_add' meal.id %}" class="ig-buy">
+          {% csrf_token %}
 
-            <!-- Achat -->
-            <form method="post" action="{% url 'orders:cart_add' meal.id %}">
-              {% csrf_token %}
+          <div class="ig-qty">
+            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="decQty(this)" {% if sold_out %}disabled{% endif %}>−</button>
 
-              <div class="d-flex align-items-center gap-2 mb-3">
-                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="decQty(this)" {% if sold_out %}disabled{% endif %}>−</button>
+            <input type="hidden" name="quantity" value="1">
+            <span class="fw-semibold">1</span>
 
-                <input type="hidden" name="quantity" value="1">
-                <span class="fw-semibold">1</span>
+            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="incQty(this)" {% if sold_out %}disabled{% endif %}>+</button>
+          </div>
 
-                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="incQty(this)" {% if sold_out %}disabled{% endif %}>+</button>
-              </div>
+          <button type="submit" class="btn btn-dark btn-lg w-100" {% if sold_out %}disabled{% endif %}>
+            {% if sold_out %}Indisponible{% else %}Commander maintenant{% endif %}
+          </button>
+        </form>
 
-              <button type="submit" class="btn btn-dark btn-lg w-100" {% if sold_out %}disabled{% endif %}>
-                {% if sold_out %}Indisponible{% else %}Ajouter au panier{% endif %}
-              </button>
-            </form>
+        <!-- “Commentaires” -->
+        <div class="ig-comments">
+          <div class="ig-c-line"><strong>client_1</strong> Ça a l’air violent.</div>
+          <div class="ig-c-line"><strong>client_2</strong> Je prends 2.</div>
+          <div class="ig-c-more text-muted">Voir les 38 commentaires</div>
+        </div>
 
-            <!-- Détails repliables (hybride du detail) -->
-            <hr class="my-4">
-
-            <h2 class="h6 fw-bold mb-2">Détails</h2>
-            <ul class="list-unstyled small mb-0">
-            <li><strong>Prix :</strong> {{ meal.price }} FCFA</li>
-            <li><strong>Catégorie :</strong> {{ meal.category.name }}</li>
-            <li><strong>Fermeture commandes :</strong> {{ cutoff_time|time:"H:i" }}</li>
-            </ul>
-
-
-          </div><!-- body -->
-        </div><!-- card -->
-      </div><!-- col -->
-    </div><!-- row -->
-  </div><!-- page-surface -->
+      </div>
+    </article>
+  </div>
 
   {% endif %}
 </section>
+
+<style>
+/* --- Instagram-like card (simple, robuste) --- */
+.ig-wrap{max-width:520px}
+.ig-card{background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:16px;overflow:hidden}
+.ig-header{display:flex;align-items:center;gap:.75rem;padding:.9rem 1rem;border-bottom:1px solid rgba(0,0,0,.06)}
+.ig-avatar{width:40px;height:40px;border-radius:50%;
+  background:linear-gradient(135deg,#ff7a18,#af002d 41%,#319197);
+}
+.ig-head-txt{min-width:0;flex:1}
+.ig-title{font-weight:700;line-height:1.1}
+.ig-sub{font-size:.85rem;color:#6c757d;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ig-badge{border-radius:999px}
+
+.ig-media{background:#f6f7f8}
+.ig-media img{width:100%;display:block;aspect-ratio:1/1;object-fit:cover}
+
+.ig-actions{display:flex;align-items:center;justify-content:space-between;padding:.6rem .9rem}
+.ig-actions-left{display:flex;gap:.35rem}
+.ig-iconbtn{border:0;background:transparent;font-size:1.25rem;line-height:1;padding:.25rem .35rem;cursor:pointer}
+.ig-iconbtn:disabled{opacity:.5;cursor:not-allowed}
+
+.ig-body{padding:.2rem 1rem 1rem}
+.ig-meal{font-size:1.05rem;font-weight:800;margin:.35rem 0 .25rem}
+.ig-desc{margin:0 0 .75rem}
+.ig-meta{display:flex;justify-content:space-between;color:#6c757d;font-size:.85rem;margin-bottom:.75rem}
+.ig-like{font-weight:600;color:#111}
+
+.ig-buy{display:grid;gap:.75rem;margin:.25rem 0 1rem}
+.ig-qty{display:flex;align-items:center;gap:.6rem}
+
+.ig-comments{font-size:.92rem}
+.ig-c-line{margin:.2rem 0}
+.ig-c-more{margin-top:.35rem}
+</style>
 
 <script>
 function incQty(btn){
